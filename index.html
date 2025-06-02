@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Breakfast Menu</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+        }
+
+        .header {
+            background-color: #e5f3ff;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .module {
+            background-color: #ffffc2;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .item {
+            background-color: #006666;
+            color: white;
+            padding: 10px;
+            margin-bottom: 2px;
+        }
+
+        .desc {
+            background-color: #f2f2f2;
+            padding: 10px;
+            font-style: italic;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Step C -->
+    <div class="module">Food whose price is greater than $5.00 and food whose calorie does not exceed 700 cal.</div>
+    <div id="calorieFilter"></div>
+
+    <script>
+        fetch('menu.xml')
+            .then(response => response.text())
+            .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+            .then(data => {
+                const foods = data.getElementsByTagName('food');
+                const calDiv = document.getElementById('calorieFilter');
+
+                for (let food of foods) {
+                    const name = food.getElementsByTagName('name')[0].textContent;
+                    const price = parseFloat(food.getElementsByTagName('price')[0].textContent);
+                    const description = food.getElementsByTagName('description')[0].textContent;
+                    const calories = parseInt(food.getElementsByTagName('calories')[0].textContent);
+
+                    if (calories <= 700) {
+                        calDiv.innerHTML += `
+        <div class="item">${name} - $${price.toFixed(2)}</div>
+        <div class="desc">${description} (${calories} calories per serving)</div>
+    `;
+                    }
+                }
+            });
+    </script>
+</body>
+</html>
